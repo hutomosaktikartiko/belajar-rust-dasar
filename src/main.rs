@@ -177,3 +177,43 @@ fn two_dimensional_array() {
     println!("{:?}", matrix[0][1]);
     println!("{:?}", matrix);
 }
+
+const MAXIMUM: i32 = 100;
+
+#[test]
+fn constant() {
+    const MINIMUM: i32 = 10;
+    println!("Maximum {}", MAXIMUM);
+    println!("Minimum {}", MINIMUM);
+}
+
+#[test]
+fn variable_scope() {
+    let hutomo = 1;
+
+    { // inner scope
+        println!("inner hutomo {}", hutomo);
+        let sakti = 2;
+        println!("inner sakti {}", sakti);
+    }
+    
+    // println!("outer hutomo {} sakti {}", hutomo, sakti);
+}
+
+#[test]
+fn stack_heap() {
+    function_a();
+    function_b();
+}
+
+fn function_a() {
+    let a = 10;
+    let b = String::from("Hutomo");
+    println!("a {} b {}", a, b);
+}
+
+fn function_b() {
+    let a = 20;
+    let b = String::from("Sakti");
+    println!("a {} b {}", a, b);
+}
