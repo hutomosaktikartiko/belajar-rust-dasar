@@ -111,3 +111,69 @@ fn boolean_operator() {
     let lulus_final = lulus && lulus_nilai_akhir;
     println!("lulus {}", lulus_final);
 }
+
+#[test]
+fn char_type() {
+    let a = 'a';
+    let b: char = 'b';
+    println!("a {} b {}", a, b);
+}
+
+#[test]
+fn tuple() {
+    let mut data: (i32, f64, bool) = (10, 10.5, true);
+    println!("{:?}", data);
+    
+    let a = data.0;
+    let b = data.1;
+    let c = data.2;
+    println!("a {} b {} c {}", a, b, c);
+    
+    let (a, _, c) = data; // destructure
+    println!("a {} c {}", a, c);
+    
+    data.0 = 20;
+    println!("{:?}", data);
+}
+
+fn unit() {
+    println!("Hello");
+}
+
+#[test]
+fn test_unit() {
+    let result = unit();
+    println!("{:?}", result);
+    
+    let test = ();
+    println!("{:?}", test);
+}
+
+#[test]
+fn array() {
+    let mut array: [i32; 5] = [1, 2, 3, 4, 5];
+    println!("{:?}", array);
+    
+    let a = array[0];
+    let b = array[1];
+    println!("a {} b {}", a, b);
+    
+    array[0] = 10;
+    array[2] = 30;
+    println!("{:?}", array);
+    
+    let length: usize = array.len();
+    println!("length {}", length);
+}
+
+#[test]
+fn two_dimensional_array() {
+    let matrix: [[i32; 2]; 2] = [
+        [1, 2],
+        [3, 4]
+    ];
+    
+    println!("{:?}", matrix[0]);
+    println!("{:?}", matrix[0][1]);
+    println!("{:?}", matrix);
+}
