@@ -237,3 +237,235 @@ fn string_type() {
     let kartiko = name.replace("Hutomo", "Kartiko");
     println!("{}", kartiko);
 }
+
+#[test]
+fn ownership_rules() {
+    // a tidak bisa diakses di sini, belum dideklarasikan
+    let a = 10; // a bisa diakses mulai di sini
+
+    { // b tidak bisa diakses di sini, belum dideklarasikan
+        let b = 20;
+        println!("b {}", b);
+    } // scope b selesai, b dihapus, b tidak bisa diakses
+    
+    println!("a {}", a);
+} // scope a selesai, a dihapus, a tidak bisa diakses
+
+#[test]
+fn data_copy() {
+    let a = 10;
+    let b = a;
+    
+    println!("a  {} b {}", a, b);
+}
+
+#[test]
+fn ownership_movement() {
+    let name1 = String::from("Hutomo");
+    
+    // ownership dari name1 dipindahkan ke name2
+    let name2 = name1;
+    // name1 tidak bisa diakses di sini
+    
+    println!("name2 {}", name2);
+}
+
+#[test]
+fn clone() {
+    let name1 = String::from("Hutomo");
+    let name2 = name1.clone();
+    
+    println!("name1 {}", name1);
+    println!("name2 {}", name2);
+}
+
+#[test]
+fn if_expression() {
+    let value = 90;
+    
+    let result: &str = if value >= 80 {
+        "Good"
+    } else if value >= 60 {
+        "Not Bad"
+    } else {
+        "Very Bad"
+    };
+    
+    println!("result {}", result);
+}
+
+#[test]
+fn loop_expression() {
+    let mut counter = 0;
+    loop {
+        counter += 1;
+        if counter > 10 {
+            break;
+        } else if counter % 2 == 0 {
+            continue;
+        }
+        
+        println!("counter: {}", counter);
+    }
+}
+
+#[test]
+fn loop_return_value() {
+    let mut counter = 10;
+    let result = loop {
+        counter += 1;
+        if counter > 10 {
+            break counter * 2
+        }
+    };
+    
+    println!("result {}", result);
+}
+
+#[test]
+fn loop_label() {
+    let mut number = 1;
+    'outer: loop {
+        let mut i = 0;
+        loop {
+            if number > 10 {
+                break 'outer;
+            }
+            
+            println!("{} x {} = {}", number, i, number * i);
+            i += 1;
+            if i > 10 {
+                break;
+            }
+        }
+        
+        number += 1;
+    }
+}
+
+#[test]
+fn while_loop() {
+    let mut counter = 0;
+    while counter <= 10 {
+        if counter % 2 == 0 {
+            println!("counter: {}", counter);
+        }
+        counter += 1;
+    }
+}
+
+#[test]
+fn array_iteration() {
+    let array: [&str; 5] = ["a", "b", "c", "d", "e"];
+    let mut index = 0;
+    
+    while index < array.len() {
+        println!("value {}", array[index]);
+        index += 1;
+    }
+}
+
+#[test]
+fn array_iteration_for_loop() {
+    let array: [&str; 5] = ["a", "b", "c", "d", "e"];
+    
+    for value in array {
+        println!("value {}", value);
+    }
+}
+
+#[test]
+fn range_exclusive() {
+    let array: [i32; 5] = [1, 2, 3, 4, 5];
+    
+    let range = 0..5;
+    println!("start {}", range.start);
+    println!("end {}", range.end);
+
+    for i in  range {
+        println!("array {}", array[i]);
+    }
+}
+
+#[test]
+fn range_inclusive() {
+    let  array: [i32; 5] = [1, 2, 3, 4, 5];
+    
+    let range = 0..=4;
+    println!("start {}", range.start());
+    println!("end {}", range.end());
+
+    for i in  range {
+        println!("array {}", array[i]);
+    }
+}
+
+fn say_hello() {
+    println!("Hello");
+}
+
+#[test]
+fn test_say_hello() {
+    say_hello();
+}
+
+fn say_goodbye(name: &str) {
+    println!("Goodbye {}", name);
+}
+
+#[test]
+fn test_say_goodbye() {
+    say_goodbye("Hutommo");
+    say_goodbye("Sakti");
+}
+
+fn factorial_loop(n: i32) -> i32 {
+    if n < 1 {
+        return 0;
+    }
+    
+    let mut  result = 1;
+    for i in 1..=n {
+        result *= i;
+    }
+    
+    result
+}
+
+#[test]
+fn test_factorial_loop() {
+    let result  = factorial_loop(5);
+    println!("factorial_loop {}", result);
+    
+    let  result  = factorial_loop(-10);
+    println!("factorial_loop {}", result);
+}
+
+fn print_text(value: String, times: i32) {
+    if times == 0 {
+        return;
+    } else {
+        println!("{}", value);
+    }
+    
+    print_text(value, times - 1)
+}
+
+#[test]
+fn test_print_text() {
+    print_text(String::from("Hello"), 5);
+}
+
+fn factorial_recursive(n: u32) -> u32 {
+    if n <= 1 {
+        return 1;
+    }
+    
+    n * factorial_recursive(n - 1)
+}
+
+#[test]
+fn test_factorial_recursive() {
+    let result = factorial_recursive(5);
+    println!("factorial_recursive {}", result);
+}
