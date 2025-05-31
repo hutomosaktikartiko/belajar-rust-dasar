@@ -469,3 +469,90 @@ fn test_factorial_recursive() {
     let result = factorial_recursive(5);
     println!("factorial_recursive {}", result);
 }
+
+fn print_number(number: i32) {
+    println!("number {}", number);
+}
+
+fn hi(name: String) {
+    println!("Hi {}", name);
+}
+
+#[test]
+fn test_hi() {
+    let number = 20;
+    print_number(number);
+    println!("{}", number);
+    
+    let name = String::from("Hutomo");
+    hi(name);
+    // println!("{}", name);
+}
+
+fn full_name(first_name: &String, last_name: &String) -> String {
+    format!("{} {}", first_name, last_name)
+}
+
+#[test]
+fn test_full_name() {
+    let first_name = String::from("Hutomo");
+    let last_name = String::from("Sakti");
+    
+    let full_name = full_name(&first_name, &last_name);
+    println!("Name {}", full_name);
+    println!("first_name {}", first_name);
+    println!("last_name {}", last_name);
+}
+
+fn change_value(value: &mut String) {
+    value.push_str(" Sakti");
+}
+
+#[test]
+fn test_change_value() {
+    let mut name = String::from("Hutomo");
+    change_value(&mut name);
+    change_value(&mut name);
+    change_value(&mut name);
+    println!("Name {}", name);
+}
+
+fn get_full_name(first_name: &String, last_name: &String) -> String {
+    let name = format!("{} {}", first_name, last_name);
+    
+    name
+}
+
+#[test]
+fn test_get_full_name() {
+    let first_name = String::from("Hutomo");
+    let last_name = String::from("Sakti");
+    
+    let full_name = get_full_name(&first_name, &last_name);
+    println!("Name {}", full_name);
+}
+
+#[test]
+fn slice_reference() {
+    let array: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    let slice1: &[i32] = &array[..];
+    println!("slice1 {:?}", slice1);
+    
+    let slice2: &[i32] = &array[0..5];
+    println!("slice2 {:?}", slice2);
+    
+    let slice3: &[i32] = &array[5..];
+    println!("slice3 {:?}", slice3);
+}
+
+#[test]
+fn string_slice() {
+    let name: String = String::from("Hutomo Sakti Kartiko");
+    
+    let first_name: &str = &name[0..6];
+    println!("first_name {}", first_name);
+    
+    let last_name: &str = &name[13..];
+    println!("last_name {}", last_name);
+}
