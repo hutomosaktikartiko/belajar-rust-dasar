@@ -1361,3 +1361,249 @@ fn test_iterator_method() {
     let odd: Vec<&i32> = vector.iter().filter(|x| { *x % 2 != 0 }).collect();
     println!("Odd {:?}", odd);
 }
+
+fn connect_database(host: Option<String>) {
+    match host {
+        Some(host) => {
+            println!("Connecting to database {}", host);
+        }
+        None => {
+            panic!("No database host provided")
+        }
+    }
+}
+
+#[test]
+fn test_unrecoverable_error() {
+    connect_database(Some(String::from("localhost")));
+    connect_database(None);
+}
+
+fn connect_cache(host: Option<String>) -> Result<String, String> {
+    match host {
+        Some(host) => {
+            Ok(host)
+        }
+        None => {
+            Err("No cache host provided".to_string())
+        }
+    }
+}
+
+fn connect_email(host: Option<String>) -> Result<String, String> {
+    match host {
+        Some(host) => {
+            Ok(host)
+        }
+        None => {
+            Err("No email host provided".to_string())
+        }
+    }
+}
+
+fn connect_application(host: Option<String>) -> Result<String, String> {
+    // let connect_cache = connect_cache(host.clone());
+    // match connect_cache { 
+    //     Ok(_) => {}
+    //     Err(err) => {
+    //         return Err(err)
+    //     }
+    // }
+    // 
+    // let connect_email = connect_email(host.clone());
+    // match connect_email { 
+    //     Ok(_) => {}
+    //     Err(err) => {
+    //         return Err(err)
+    //     }
+    // }
+    
+    connect_cache(host.clone())?;
+    connect_email(host.clone())?;
+    
+    Ok("Connected to application".to_string())
+}
+
+#[test]
+fn test_application_error() {
+    // let result = connect_application(Some("localhost".to_string()));
+    let result = connect_application(None);
+    match result { 
+        Ok(host) => { println!("Success connect with mmessage {}", host) }
+        Err(err) => { println!("Error with message {}", err) }       
+    }
+}
+
+#[test]
+fn test_recoverable_error() {
+    // let cache = connect_cache(Some("localhost".to_string()));
+    let cache = connect_cache(None);
+
+    match cache {
+        Ok(host) => {
+            println!("Success connect to host {}", host);
+        }
+        Err(error) => {
+            println!("Error with message {}", error);
+        }
+    }
+}
+
+#[test]
+fn test_dangling_reference() {
+    let r: &i32;
+    {
+        let x = 5;
+        // r = &x;
+    }
+    r = &40;
+    println!("r {}", r);
+}
+
+fn longest<'a>(value1: &'a str, value2: &'a str) -> &'a str {
+    if value1.len() > value2.len() {
+        value1
+    } else {
+        value2
+    }
+}
+
+#[test]
+fn test_lifetime_annotation() {
+    let value1 = "Hutommo";
+    let value2 = "Sakti";
+    
+    let result = longest(value1, value2);
+    println!("result {}", result);
+}
+
+#[test]
+fn test_lifetime_annotation_dangling_reference() {
+    let string1 = String::from("Hutomo");
+    let string2 = String::from("Sakti");
+    let result;
+    {
+        // let string2 = String::from("Sakti");
+        result = longest(string1.as_str(), string2.as_str());
+    }
+    println!("result {}", result);
+}
+
+struct Student<'a, 'b> {
+    name: &'a str,
+    last_name: &'b str
+}
+
+impl<'a, 'b> Student<'a, 'b> {
+    fn longest_name(&self, student: &Student<'a, 'b>) -> &'a str {
+        if self.name.len() > student.name.len() {
+            self.name
+        } else {
+            student.name
+        }
+    }
+}
+
+fn longest_student_name<'a, 'b>(student1: &Student<'a, 'b>, student2: &Student<'a, 'b>) -> &'a str {
+    if student1.name.len() > student2.name.len() {
+        student1.name
+    } else {
+        student2.name
+    }
+}
+
+#[test]
+fn test_student() {
+    let student = Student {
+        name: "Hutomo",
+        last_name: "Sakti",
+    };
+    println!("student {}", student.name);
+    
+    let student2 = Student {
+        name: "Budi",
+        last_name: "Nugraha"
+    };
+    
+    let result = longest_student_name(&student, &student2);
+    println!("result {}", result);
+    
+    let result = student.longest_name(&student2);
+    println!("result {}", result);
+}
+
+struct Teacher<'a, ID> where ID : Ord {
+    id: ID,
+    name: &'a str,
+}
+
+#[test]
+fn test_lifetime_annotation_generic() {
+    let teacher: Teacher<i32> = Teacher {
+        id: 10,
+        name: "Hutomo",
+    };
+    println!("teacher {}", teacher.name);
+}
+
+#[derive(Debug, PartialEq, PartialOrd)]
+struct Company {
+    name: String,
+    location: String,
+    website: String,
+}
+
+#[test]
+fn test_attribute_derive() {
+    let company = Company {
+        name: String::from("Nusasync"),
+        location: "Jakarta".to_string(),
+        website: "https://nusasync.com".to_string(),
+    };
+    
+    println!("{:?}", company);
+
+    let company2 = Company {
+        name: String::from("Nusasync"),
+        location: "Jakarta".to_string(),
+        website: "https://nusasync.com".to_string(),
+    };
+    
+    println!("partialEq {:?}", company == company2);
+    println!("partialOrd {:?}", company < company2);
+}
+
+#[test]
+fn test_box() {
+    let value: Box<i32> = Box::new(10);
+    println!("value {}", value);
+    display_number(*value);
+    display_number_reference((&value));
+}
+
+fn display_number(value: i32) {
+    println!("{}", value);
+}
+
+fn display_number_reference(value: &i32) {
+    println!("{}", value);
+}
+
+#[derive(Debug)]
+enum ProductCategory {
+    Of(String, Box<ProductCategory>),
+    End
+}
+
+#[test]
+fn test_box_enum() {
+    let category = Box::new(ProductCategory::Of(
+        "Laptop".to_string(),
+        Box::new(ProductCategory::Of(
+            "Dell".to_string(),
+            Box::new(ProductCategory::End)
+        ))
+    ));
+    
+    println!("{:?}", category);
+}
