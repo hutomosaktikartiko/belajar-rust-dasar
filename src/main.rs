@@ -1067,7 +1067,7 @@ impl<T> GetValue<T> for Point<T> where T: PartialOrd {
 
 use core::ops::Add;
 use std::cmp::Ordering;
-use std::collections::{LinkedList, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, LinkedList, VecDeque};
 
 struct Apple {
     quantity: i32,
@@ -1275,4 +1275,89 @@ fn test_linked_list() {
     for names in &names {
         println!("{}", names);
     }
+}
+
+#[test]
+fn test_hash_map() {
+    let mut map: HashMap<String, String> = HashMap::new();
+    
+    map.insert(String::from("name"), String::from("Hutomo"));
+    map.insert(String::from("age"), String::from("20"));
+    
+    let name = map.get("name");
+    let age = map.get("age");
+    
+    println!("name {}", name.unwrap());
+    println!("age {}", age.unwrap());
+}
+
+#[test]
+fn test_btree_map() {
+    let mut map: BTreeMap<String, String> = BTreeMap::new();
+    
+    map.insert(String::from("name"), String::from("Hutomo"));
+    map.insert(String::from("age"), String::from("20"));
+    
+    for entry in map.iter() {
+        println!("{} {}", entry.0, entry.1);
+    }
+}
+
+#[test]
+fn test_hash_set() {
+    let mut set: HashSet<String> = HashSet::new();
+    
+    set.insert(String::from("Hutomo"));
+    set.insert(String::from("Sakti"));
+    set.insert(String::from("Hutomo"));
+    
+    for value in set {
+        println!("{}", value);
+    }
+}
+
+#[test]
+fn test_btree_set() {
+    let mut set: BTreeSet<String> = BTreeSet::new();
+
+    set.insert(String::from("Hutomo"));
+    set.insert(String::from("Sakti"));
+    set.insert(String::from("Hutomo"));
+    set.insert(String::from("Kartiko"));
+
+    for value in set {
+        println!("{}", value);
+    }
+}
+
+#[test]
+fn test_iterator() {
+    let array = [10, 20, 30, 40, 50];
+    let mut iterator = array.iter();
+    
+    while let Some(value) = iterator.next() {
+        println!("{}", value);
+    }
+    
+    for value in iterator {
+        println!("{}", value);
+    }
+}
+
+#[test]
+fn test_iterator_method() {
+    let vector: Vec<i32> = vec![5, 10, 20, 30, 40, 50];
+    println!("Vector {:?}", vector);
+    
+    let sum: i32 = vector.iter().sum();
+    println!("Sum {}", sum);
+    
+    let count: usize = vector.iter().count();
+    println!("Count {}", count);
+    
+    let doubled: Vec<i32> = vector.iter().map(|x| {x * 2}).collect();
+    println!("Doubled {:?}", doubled);
+    
+    let odd: Vec<&i32> = vector.iter().filter(|x| { *x % 2 != 0 }).collect();
+    println!("Odd {:?}", odd);
 }
