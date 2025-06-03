@@ -1607,3 +1607,173 @@ fn test_box_enum() {
     
     println!("{:?}", category);
 }
+
+#[test]
+fn test_dereference() {
+    let value1 = Box::new(10);
+    let value2 = Box::new(20);
+
+    let result = *value1 * *value2;
+    println!("result {}", result);
+}
+
+struct MyValue<T> {
+    value: T,
+}
+
+use std::ops::Deref;
+
+impl<T> Deref for MyValue<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+
+#[test]
+fn test_dereference_struct() {
+    let value = MyValue { value: 10 };
+    let real_value = *value;
+    println!("real_value {}", real_value);
+}
+
+fn say_hello_reference(name: &String) {
+    println!("Hello {}", name);
+}
+
+#[test]
+fn test_deref_reference() {
+    let name = MyValue {
+        value: "Hutomo".to_string(),
+    };
+
+    say_hello_reference((&name));
+}
+
+struct Book {
+    title: String,
+}
+
+impl Drop for Book {
+    fn drop(&mut self) {
+        println!("Dropping book {}", self.title);
+    }
+}
+
+#[test]
+fn test_drop() {
+    let book = Book { title: "Hutomo".to_string() };
+    println!("book {}", book.title);
+}
+
+use std::rc::Rc;
+
+enum Brand {
+    Of(String, Rc<Brand>),
+    End
+}
+
+#[test]
+fn test_multiple_ownership() {
+    // let apple = ProductCategory::Of("Apple".to_string(), Box::new(ProductCategory::End));
+    // let laptop = ProductCategory::Of("Laptop".to_string(), Box::new(apple));
+    // let smartphone = ProductCategory::Of("Smartphone".to_string(), Box::new(apple));
+
+    let apple = Rc::new(Brand::Of("Apple".to_string(), Rc::new(Brand::End)));
+    println!("Apple ref count {}", Rc::strong_count(&apple));
+
+    let laptop = Brand::Of("laptop".to_string(), Rc::clone(&apple));
+    println!("Apple ref count {}", Rc::strong_count(&apple));
+
+    {
+        let smartphone = Brand::Of("Smartphone".to_string(), Rc::clone(&apple));
+        println!("Apple ref count {}", Rc::strong_count(&apple));
+    }
+
+    println!("Apple ref count {}", Rc::strong_count(&apple));
+}
+
+use std::cell::RefCell;
+use std::cell::RefMut;
+
+#[derive(Debug)]
+struct Seller {
+    name: RefCell<String>,
+    active: RefCell<bool>,
+}
+
+#[test]
+fn test_ref_cell() {
+    let seller = Seller {
+        name: RefCell::new("Hutommo".to_string()),
+        active: RefCell::new(true),
+    };
+
+    {
+        let mut result: RefMut<String> = seller.name.borrow_mut();
+        *result = "Budi".to_string();
+    }
+
+    println!("{:?}", seller);
+}
+
+static APPLICATION: &str = "My Application";
+
+#[test]
+fn test_static() {
+    println!("APPLICATION {}", APPLICATION);
+}
+
+// static mut COUNTER: u32 = 0;
+//
+// unsafe fn increment() {
+//     COUNTER += 1;
+// }
+//
+// #[test]
+// fn test_unsafe() {
+//     unsafe {
+//         increment();
+//         COUNTER += 1;
+//
+//         println!("COUNTER {}", COUNTER);
+//     }
+// }
+
+macro_rules! hi {
+    () => {
+        println!("Hi")
+    };
+    ($name: expr) => {
+        println!("Hi {}", $name)
+    }
+}
+
+#[test]
+fn test_macro() {
+    hi!();
+    hi!("Hutomo");
+    hi! {
+        "Hutomo"
+    };
+}
+
+macro_rules! iterate {
+    ($array : expr) => {
+        for i in $array {
+            println!("{}", i)
+        }
+    };
+    ($($item: expr), *) => {
+        $(
+            println!("{}", $item);
+        )*
+    }
+}
+
+#[test]
+fn test_macro_iterate() {
+    iterate!([1, 2, 3, 4, 5]);
+    iterate!(1,2,3,4,5);
+}
